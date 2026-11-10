@@ -120,7 +120,7 @@ function openCart() {
   backdrop.classList.add("visible");
   cartDrawer.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
-  if (window.deliveryMap) setTimeout(() => window.deliveryMap.invalidateSize(), 250);
+
 }
 function closeCart() {
   cartDrawer.classList.remove("open");
@@ -214,70 +214,32 @@ document.getElementById("order-form").addEventListener("submit", async event => 
   }
 });
 
-// Delivery map: customers can tap or drag the pin to share an exact drop-off point.
-(function initDeliveryMap() {
-  const mapElement = document.getElementById("delivery-map");
-  if (!mapElement) return;
-  if (!window.L) {
-    mapElement.innerHTML = '<div class="map-load-error">The map could not load. Please check your internet connection, refresh the page, and try again.</div>';
-    return;
-  }
-
-  const map = L.map(mapElement).setView([26.8206, 30.8025], 5);
-  window.deliveryMap = map;
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
-
-  let marker = null;
-  const addressField = document.getElementById("customer-address");
+// Google Maps delivery area. Exact coordinates are captured when the customer shares their location.
+(function initGoogleDeliveryMap() {
+  const mapFrame = document.getElementById("delivery-map");
+  if (!mapFrame) return;
   const latitudeField = document.getElementById("delivery-latitude");
   const longitudeField = document.getElementById("delivery-longitude");
   const selectionStatus = document.getElementById("map-selection-status");
-  const status = document.getElementById("form-status");
+  const addressField = document.getElementById("customer-address");
+  const openMaps = document.getElementById("open-google-maps");
 
-  async function setDeliveryPoint(latlng) {
-    const lat = Number(latlng.lat.toFixed(6));
-    const lng = Number(latlng.lng.toFixed(6));
-    latitudeField.value = lat;
-    longitudeField.value = lng;
-    if (!marker) marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-    else marker.setLatLng([lat, lng]);
-    marker.off("dragend").on("dragend", event => setDeliveryPoint(event.target.getLatLng()));
-    selectionStatus.textContent = `Pinned: ${lat}, ${lng}`;
-
-    selectionStatus.textContent = "Finding address...";
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
-      if (!response.ok) throw new Error("Reverse geocoding failed");
-      const data = await response.json();
-      if (data.display_name) {
-        addressField.value = data.display_name;
-        selectionStatus.textContent = "Location selected ✓";
-      } else selectionStatus.textContent = `Pinned: ${lat}, ${lng}`;
-    } catch (_) {
-      selectionStatus.textContent = `Pinned: ${lat}, ${lng}`;
-      if (!addressField.value.trim()) addressField.placeholder = "Enter the street, building and apartment details";
-    }
-  }
-
-  map.on("click", event => setDeliveryPoint(event.latlng));
   document.getElementById("use-my-location").addEventListener("click", () => {
-    if (!navigator.geolocation) {
-      selectionStatus.textContent = "Location is not supported by this browser";
-      return;
-    }
+    if (!navigator.geolocation) { selectionStatus.textContent = "Location is not supported by this browser"; return; }
     selectionStatus.textContent = "Getting your location...";
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const point = [position.coords.latitude, position.coords.longitude];
-        map.setView(point, 16);
-        setDeliveryPoint({ lat: point[0], lng: point[1] });
-      },
-      () => { selectionStatus.textContent = "Couldn't access location. Tap the map instead."; },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+    navigator.geolocation.getCurrentPosition(async position => {
+      const lat = Number(position.coords.latitude.toFixed(6));
+      const lng = Number(position.coords.longitude.toFixed(6));
+      latitudeField.value = lat;
+      longitudeField.value = lng;
+      mapFrame.src = `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+      openMaps.href = `https://www.google.com/maps?q=${lat},${lng}`;
+      selectionStatus.textContent = `Location selected: ${lat}, ${lng}`;
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+        if (response.ok) { const data = await response.json(); if (data.display_name && !addressField.value.trim()) addressField.value = data.display_name; }
+      } catch (_) { /* Customer can enter the address manually. */ }
+    }, () => { selectionStatus.textContent = "Couldn't access location. Enter your address manually or open Google Maps."; }, { enableHighAccuracy: true, timeout: 12000 });
   });
 })();
 
