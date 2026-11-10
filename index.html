@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f4c842">
   <title>Easger Duckins | Duck Your Style</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
   <div class="announcement">🦆 FREE DELIVERY ON ORDERS OVER 1500 EGP · WELCOME TO THE FLOCK</div>
@@ -96,7 +97,12 @@
         <label for="customer-phone">Phone number</label>
         <input id="customer-phone" name="customer_phone" type="tel" autocomplete="tel" required placeholder="+20...">
         <label for="customer-address">Delivery address</label>
+        <p class="map-help">Tap the map to pin the delivery location, or drag the pin to adjust it.</p>
+        <div class="map-actions"><button type="button" class="location-button" id="use-my-location">◎ USE MY LOCATION</button><span id="map-selection-status" aria-live="polite">No location selected</span></div>
+        <div id="delivery-map" role="application" aria-label="Select delivery location on map"></div>
         <textarea id="customer-address" name="customer_address" autocomplete="street-address" required placeholder="City, street, building and apartment"></textarea>
+        <input type="hidden" name="delivery_latitude" id="delivery-latitude">
+        <input type="hidden" name="delivery_longitude" id="delivery-longitude">
         <input type="hidden" name="order_details" id="order-details">
         <input type="hidden" name="_subject" value="New Easger Duckins order">
         <input type="hidden" name="_captcha" value="false">
@@ -108,6 +114,7 @@
   </aside>
 
   <div class="toast" id="toast" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
