@@ -72,8 +72,14 @@ productGrid.addEventListener("click", event => {
 
 function renderCart() {
   document.getElementById("cart-count").textContent = cart.length;
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
-  document.getElementById("subtotal").textContent = money(total);
+  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const deliveryCost = cart.length ? 80 : 0;
+  const grandTotal = subtotal + deliveryCost;
+  document.getElementById("subtotal").textContent = money(subtotal);
+  const deliveryEl = document.getElementById("delivery-cost");
+  if (deliveryEl) deliveryEl.textContent = money(deliveryCost);
+  const grandTotalEl = document.getElementById("grand-total");
+  if (grandTotalEl) grandTotalEl.textContent = money(grandTotal);
 
   if (!cart.length) {
     cartItems.innerHTML = `<div class="empty-cart"><span>🦆</span><p>Your bag is empty.<br>Let's find you a fresh fit!</p></div>`;
@@ -166,7 +172,10 @@ document.getElementById("order-form").addEventListener("submit", async event => 
   const orderLines = cart.map((item, index) =>
     `${index + 1}. ${item.name} | ${money(item.price)} | Size: ${item.size} | Color: ${item.color}`
   );
-  const orderDetails = `${orderLines.join("\n")}\n\nSubtotal: ${money(cart.reduce((sum, item) => sum + item.price, 0))}\nDelivery address: ${document.getElementById("customer-address").value}`;
+  const subtotalValue = cart.reduce((sum, item) => sum + item.price, 0);
+  const deliveryValue = 80;
+  const totalValue = subtotalValue + deliveryValue;
+  const orderDetails = `${orderLines.join("\n")}\n\nSubtotal: ${money(subtotalValue)}\nDelivery cost: ${money(deliveryValue)}\nTotal: ${money(totalValue)}\nDelivery address: ${document.getElementById("customer-address").value}`;
   document.getElementById("order-details").value = orderDetails;
 
   button.disabled = true;

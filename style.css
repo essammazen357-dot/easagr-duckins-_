@@ -84,7 +84,13 @@ button { cursor: pointer; }
 .cart-line select { min-width: 105px; max-width: 145px; padding: 8px 7px; border: 1px solid var(--line); border-radius: 8px; background: white; font-size: 11px; }
 .remove-item { align-self: start; border: 0; background: none; color: #bd4c30; font-size: 11px; font-weight: 900; }
 .checkout-area { max-height: 57%; overflow: auto; padding: 16px 22px 22px; border-top: 1px solid var(--line); }
-.subtotal { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; font-weight: 900; }.subtotal strong { font-size: 19px; }
+.order-summary { margin-bottom: 15px; }
+.subtotal { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; font-weight: 900; }
+.subtotal strong { font-size: 16px; }
+.delivery-row { color: var(--muted); font-size: 12px; }
+.delivery-row strong { font-size: 14px; }
+.total-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); margin-bottom: 0; font-size: 14px; }
+.total-row strong { font-size: 19px; }
 .form-title { margin: 0 0 11px; font-size: 11px; font-weight: 1000; letter-spacing: 1.3px; }
 #order-form label { display: block; margin: 9px 0 5px; font-size: 10px; font-weight: 900; }
 #order-form input:not([type=hidden]), #order-form textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: white; outline: none; font-size: 12px; }
