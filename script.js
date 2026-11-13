@@ -1,4 +1,4 @@
-// Easger Duckins storefront — edit the products array below to update your collection.
+// Eaesgr Duckins storefront — edit the products array below to update your collection.
 const STORE_EMAIL = "easagerduckins@gmail.com";
 
 const products = [
@@ -42,7 +42,7 @@ function renderProducts(category = "all") {
       </div>
       <div class="product-info">
         <h3>${product.name}</h3>
-        <div class="product-category">${product.category.toUpperCase()} · EASGER DUCKINS</div>
+        <div class="product-category">${product.category.toUpperCase()} · EAESGR DUCKINS</div>
         <span class="product-price">${money(product.price)}</span>
         ${product.oldPrice ? `<span class="old-price">${money(product.oldPrice)}</span>` : ""}
         <button class="add-button" type="button" data-add="${product.id}">ADD TO BAG +</button>
@@ -72,14 +72,8 @@ productGrid.addEventListener("click", event => {
 
 function renderCart() {
   document.getElementById("cart-count").textContent = cart.length;
-  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-  const deliveryCost = cart.length ? 80 : 0;
-  const grandTotal = subtotal + deliveryCost;
-  document.getElementById("subtotal").textContent = money(subtotal);
-  const deliveryEl = document.getElementById("delivery-cost");
-  if (deliveryEl) deliveryEl.textContent = money(deliveryCost);
-  const grandTotalEl = document.getElementById("grand-total");
-  if (grandTotalEl) grandTotalEl.textContent = money(grandTotal);
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  document.getElementById("subtotal").textContent = money(total);
 
   if (!cart.length) {
     cartItems.innerHTML = `<div class="empty-cart"><span>🦆</span><p>Your bag is empty.<br>Let's find you a fresh fit!</p></div>`;
@@ -172,10 +166,7 @@ document.getElementById("order-form").addEventListener("submit", async event => 
   const orderLines = cart.map((item, index) =>
     `${index + 1}. ${item.name} | ${money(item.price)} | Size: ${item.size} | Color: ${item.color}`
   );
-  const subtotalValue = cart.reduce((sum, item) => sum + item.price, 0);
-  const deliveryValue = 80;
-  const totalValue = subtotalValue + deliveryValue;
-  const orderDetails = `${orderLines.join("\n")}\n\nSubtotal: ${money(subtotalValue)}\nDelivery cost: ${money(deliveryValue)}\nTotal: ${money(totalValue)}\nDelivery address: ${document.getElementById("customer-address").value}`;
+  const orderDetails = `${orderLines.join("\n")}\n\nSubtotal: ${money(cart.reduce((sum, item) => sum + item.price, 0))}\nDelivery address: ${document.getElementById("customer-address").value}`;
   document.getElementById("order-details").value = orderDetails;
 
   button.disabled = true;
@@ -206,7 +197,7 @@ document.getElementById("order-form").addEventListener("submit", async event => 
     renderCart();
     form.reset();
   } catch (error) {
-    console.error("Easger Duckins order error:", error);
+    console.error("Eaesgr Duckins order error:", error);
     showStatus(
       "We couldn't confirm that your order was sent. Check your internet connection and make sure the store email has been activated with FormSubmit, then try again.",
       "error"
