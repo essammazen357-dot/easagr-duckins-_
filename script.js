@@ -170,21 +170,6 @@ document.getElementById("order-form").addEventListener("submit", async event => 
   const orderDetails = `${orderLines.join("\n")}\n\nSubtotal: ${money(orderSubtotal)}\nDelivery cost (flat per order): ${money(deliveryTotal)}\nTotal: ${money(orderSubtotal + deliveryTotal)}\nDelivery address: ${document.getElementById("customer-address").value}`;
   document.getElementById("order-details").value = orderDetails;
 
-  // Thank-you email sent automatically to the customer (FormSubmit autoresponse).
-  const thankYouItems = cart.map(item => `${item.name} (${item.size}, ${item.color})`).join("\n");
-  document.getElementById("autoresponse").value =
-`Thank You For Your Purchase
-
-Ordered from
-Eaesgr Duckins
-
-Total cost
-${money(orderSubtotal + deliveryTotal)} (includes ${money(deliveryTotal)} delivery)
-
-Items
-${thankYouItems}
-
-We'll contact you soon to confirm your order. Stay quacky! 🦆`;
 
   button.disabled = true;
   button.textContent = "SENDING ORDER...";
